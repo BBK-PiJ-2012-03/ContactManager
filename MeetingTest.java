@@ -6,7 +6,8 @@ public class MeetingTest {
 		MeetingTest script = new MeetingTest();
 		script.launch();
 	}
-
+	private int Year = 0;
+	
 	public void launch() {
 		Set<Contact> mySet;
 		mySet = new HashSet<Contact>();
@@ -17,9 +18,15 @@ public class MeetingTest {
 		mySet.add(mary);
 		mySet.add(sofia);
 		
-		Meeting myMeeting = new MeetingImpl(1, "dokimh", mySet);
+		Calendar myCal = new GregorianCalendar(); 
+		myCal.set(1989,1,18);
+		
+		Meeting myMeeting = new MeetingImpl(1, myCal, mySet);
 		System.out.println("The meeting's ID is " + myMeeting.getId());
 		
+		
+		
+		System.out.println(myCal.get(Year));
 		
 		
 		//Contact[] myArray = new Contact[10];
