@@ -2,12 +2,11 @@ import java.util.Calendar;
 import java.util.Set;
 public class MeetingImpl implements Meeting {
 	private int ID;
-	String date; //k kala to date, einai MONO TO DAY OF MONTH TO VAZW ETSI GIA DOKIMH
-	//Create a Calendar object with the default time zone and locale
+	private Calendar date;
 	private Set<Contact> mySet;
-	private String notes;
+	public String notes;
 	
-	public MeetingImpl(int ID, String date, Set<Contact> mySet) {
+	public MeetingImpl(int ID, Calendar date, Set<Contact> mySet) {
 		this.ID = ID;
 		this.date = date;
 		this.mySet = mySet;
@@ -19,8 +18,7 @@ public class MeetingImpl implements Meeting {
 	}
 
 	public Calendar getDate() {
-		Calendar rightNow = Calendar.getInstance();
-		return(rightNow.getTime());
+		return date;
 	}
 
 	public Set<Contact> getContacts() {
