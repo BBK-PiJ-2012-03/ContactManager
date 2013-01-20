@@ -176,14 +176,18 @@ public class ContactManagerImpl {
 			//Add the meeting with the new notes
 			pastMeetings.put(id, meeting);
 		}
+		//B) It is a futureMeeting that took place and I now want to recreate it as a pastMeeting and add some notes
+		else if (futureMeetings.containsKey(id)) {
+			PastMeeting meeting = (PastMeeting) futureMeetings.get(id); //Cast the meeting to make it a PastMeeting
+			meeting = new PastMeetingImpl(meeting.getId(), meeting.getContacts(), meeting.getDate(), text);
+			//Remove the meting from the futureMeetings map
+			futureMeetings.remove(id);
+			//Finally add the meeting to the pastMeetings map
+			pastMeetings.put(id, meeting);
+			}
 		
-			
-		
-		
-		//Check if a meeting with this id exists either as a past or a future meeting
-		if (!pastMeetings.containsKey(id) && !futureMeetings.containsKey(id)) {
-			throw new IllegalArgumentException("A meeting with this id does NOT exist");
-		}
+		//Finally if the meeting with this id does not exist either as a past or a future meeting , throw exception
+		else throw new IllegalArgumentException("A meeting with this id does NOT exist");
 	}	
 		
 		
