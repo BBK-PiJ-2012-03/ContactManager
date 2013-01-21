@@ -1,8 +1,8 @@
 import java.util.*;
-import java.io.IOException;
+import java.io.*;
 
 
-public class ContactManagerImpl {
+public class ContactManagerImpl implements ContactManager {
 	private int meetingCount = 0;
 	private int contactCount = 0;
 	private Map<Integer, PastMeeting> pastMeetings = new HashMap<Integer, PastMeeting>();
@@ -256,7 +256,65 @@ public class ContactManagerImpl {
 		}
 			return contacts;
 	}		
+	
+	public void flush() {
+		//Creating the file
+		File file = new File("file.csv");
+			PrintWriter out = null;
+		try {
+			out = new PrintWriter(file);
+			//First I write the Contacts
+			out.println("Contacts");
+			for (Contact contact : savedContacts.values()) {
+				out.print(contact.getId());
+				out.print(",");
+				out.print(contact.getName());
+				out.print(",");
+				out.println(contact.getNotes());
+			}
+			//Then I write the pastMeetings
+			out.println("Past Meetings");
+			for (PastMeeting meeting : pastMeetings.values()) {
+				out.print(meeting.getId());
+				out.print(",");
+				for (Contact contact : meeting.getContacts()) {
+					out.print(contact.getId());
+					out.print(",");
+					out.print(contact.getName());
+					out.print(",");
+					out.print(contact.getNotes());
+				}
+				out.print(",");
+				out.print(DateConverter.date2String(meeting.getDate()));
+				out.print(",");
+				out.println(meeting.getNotes());
+			}
+			//Then I write the futureMeetings
+			out.println("Future Meetings");
+			for (Meeting meeting : futureMeetings.values()) {
+				out.print(meeting.getId());
+				out.print(",");
+				for (Contact contact : meeting.getContacts()) {
+					out.print(contact.getId());
+					out.print(",");
+					out.print(contact.getName());
+					out.print(",");
+					out.print(contact.getNotes());
+				}
+				out.print(",");
+				out.println(DateConverter.date2String(meeting.getDate()));
+			}	
+		} catch (FileNotFoundException ex) {
+			System.out.println("Cannot write to file " + file + ".");
 		
+		} finally {
+			out.close();
+		}
+	
+	
+	
+	
+	}
 		
 	
 

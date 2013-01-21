@@ -37,8 +37,12 @@ public class MeetingTest {
 		
 		
 	
-		yo.getContacts(1,2);
-		yo.addFutureMeeting(mySet,cal1);
+		Set<Contact> mySet2 = yo.getContacts(1,2);
+		for (Contact contact : mySet2) {
+			System.out.println(contact.getName() + contact.getId());
+		}
+		
+		//yo.addFutureMeeting(mySet,cal1);
 		
 		
 		
