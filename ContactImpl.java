@@ -26,6 +26,28 @@ public class ContactImpl implements Contact {
 	public void addNotes(String note) {
 		notes = notes + "\n" + note;
 	}	
+	
+	@Override
+    public boolean equals(Object obj) {
+       if (obj == null) {
+        return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		ContactImpl contact = (ContactImpl) obj;
+		if (this.ID != contact.getId()) {
+			return false;
+		}
+		if (!this.name.equals(contact.getName())) {
+			return false;
+		}
+		if (!this.notes.equals(contact.getNotes())) {
+			return false;
+		}
+		return true;
+	}
+	
 }	
 		
 	

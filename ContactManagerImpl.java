@@ -158,6 +158,10 @@ public class ContactManagerImpl {
 		pastMeetings.put(pastMeet.getId(), pastMeet);
 	}	
 	
+	/**
+	*This method can be used either to convert a futureMeeting that took place to a pastMeeting with notes,
+	*or to add notes to an existant pastMeeting
+	*/
 	public void addMeetingNotes(int id, String text) {
 		//Check if the notes entered are null
 		if (text == null) {
