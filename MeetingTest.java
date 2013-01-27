@@ -3,13 +3,14 @@ import java.util.*;
 public class MeetingTest {
 
 	
-	private Map<Integer, FutureMeeting> futureMeetings = new HashMap<Integer, FutureMeeting>();
-	private Map<Integer, Contact> savedContacts = new HashMap<Integer, Contact>();
+//	private Map<Integer, FutureMeeting> futureMeetings = new HashMap<Integer, FutureMeeting>();
+//	private Map<Integer, Contact> savedContacts = new HashMap<Integer, Contact>();
 	
 	public static void main(String[] args){
 		MeetingTest script = new MeetingTest();
 		script.launch();
 	}
+	@SuppressWarnings("unused")
 	private int Year = 0;
 	
 	public void launch() {
@@ -21,26 +22,36 @@ public class MeetingTest {
 		mySet.add(mary);
 		mySet.add(sofia);
 		
+		@SuppressWarnings("unused")
 		Calendar cal1 = Calendar.getInstance();
+		
+		String date = "07/02/2013 20:00";
+		Calendar futureDate = DateConverter.string2Date(date);
+		
 		
 		ContactManagerImpl yo = new ContactManagerImpl();
 		yo.addNewContact("John", "malakas");
-		yo.addNewContact("Mary", "mounara");
+		yo.addNewContact("Mary", "alwaysLate");
 		yo.addNewContact("Sofia", "mpazo");
 		
-		/**Iterator iterator = mySet.iterator();   
-		while (iterator.hasNext()){  
-			Object val = iterator.next();  
-			System.out.println(val);  
-		}  
-		*/
 		
 		
 	
 		Set<Contact> mySet2 = yo.getContacts(1,2);
-		for (Contact contact : mySet2) {
-			System.out.println(contact.getName() + contact.getId());
-		}
+		
+		yo.addFutureMeeting(mySet2, futureDate);
+		
+		
+		
+		
+		FutureMeeting myFut = yo.getFutureMeeting(1);
+		
+		System.out.println(myFut.getId());
+		
+		yo.flush();
+		
+		
+		
 		
 		//yo.addFutureMeeting(mySet,cal1);
 		

@@ -47,6 +47,16 @@ public class ContactImpl implements Contact {
 		}
 		return true;
 	}
+	//Created hashCode method with Eclpise's help
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ID;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((notes == null) ? 0 : notes.hashCode());
+		return result;
+	}
 	
 }	
 		

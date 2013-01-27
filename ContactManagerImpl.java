@@ -283,8 +283,9 @@ public class ContactManagerImpl implements ContactManager {
 					out.print(contact.getName());
 					out.print(",");
 					out.print(contact.getNotes());
+					out.print(",");
 				}
-				out.print(",");
+				
 				out.print(DateConverter.date2String(meeting.getDate()));
 				out.print(",");
 				out.println(meeting.getNotes());
@@ -300,8 +301,9 @@ public class ContactManagerImpl implements ContactManager {
 					out.print(contact.getName());
 					out.print(",");
 					out.print(contact.getNotes());
+					out.print(",");
 				}
-				out.print(",");
+				
 				out.println(DateConverter.date2String(meeting.getDate()));
 			}	
 		} catch (FileNotFoundException ex) {

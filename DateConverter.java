@@ -22,7 +22,9 @@ public class DateConverter {
 			ex.printStackTrace();
 		}
 		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
+		if (date!=null) {
+			calendar.setTime(date);
+		}
 		return calendar;
 	}
 }	
