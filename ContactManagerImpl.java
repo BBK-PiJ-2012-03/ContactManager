@@ -8,7 +8,62 @@ public class ContactManagerImpl implements ContactManager {
 	private Map<Integer, PastMeeting> pastMeetings = new HashMap<Integer, PastMeeting>();
 	private Map<Integer, FutureMeeting> futureMeetings = new HashMap<Integer, FutureMeeting>();
 	private Map<Integer, Contact> savedContacts = new HashMap<Integer, Contact>();
+	private File file = new File("file.csv");
+	/**
+	public ContactManagerImpl() {
+		if (file.exists()) {
+			readFromFile();
+		}
+	}
 
+	public void readFromFile() {
+		BufferedReader in = null;
+		try {
+			in = new BufferedReader(new FileReader(file));
+			String line;
+			String[] arrayContacts, arrayPast, arrayFuture;
+			String[] stringContactId;
+			int contactId;
+			//
+			while ((line = in.readLine()) != null) {
+				// ... do things with the data here
+
+				//First I read the Contacts
+				if (line.equals("Contacts") {
+				newLine = in.readLine;
+				arrayContacts = newLine.split(",");
+				stringContactId = arrayContacts[0];
+				intContactId = Integer.parseInt(stringContactId);
+				//Now I create objects of the Contacts
+				Contact newConta
+				
+			
+			
+				}
+			}	
+		} 
+		// This exception cannot happen, because i checked if file exists in the constructor, maybe ill remove it. TODO
+		catch (FileNotFoundException ex) {
+			System.out.println("File " + file + " does not exist.");
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} 
+		finally {
+			try {
+				if (in != null) {
+					in.close()
+				}
+			}
+			catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+			
+		
+		*/
+		
+		
+		
 	public int addFutureMeeting(Set<Contact> contacts, Calendar date) {		
 		//Check if any contact is unknown / non-existent
 		contacts = new HashSet<Contact>(contacts);
@@ -20,7 +75,7 @@ public class ContactManagerImpl implements ContactManager {
 		//Check given date is in the future
 		Calendar rightNow = Calendar.getInstance();
 		if (date.compareTo(rightNow) < 0) {
-			throw new IllegalArgumentException("Date given is NOT a past date");
+			throw new IllegalArgumentException("Date given is NOT a future date");
 		}
 		//Create the meeting
 		meetingCount++;
@@ -148,7 +203,7 @@ public class ContactManagerImpl implements ContactManager {
 		//Check given date is in the past
 		Calendar rightNow = Calendar.getInstance();
 		if (date.compareTo(rightNow) > 0) {
-			throw new IllegalArgumentException("Date given is NOT a future date");
+			throw new IllegalArgumentException("Date given is NOT a past date");
 		}
 		//Create the meeting
 		meetingCount++;
@@ -181,7 +236,20 @@ public class ContactManagerImpl implements ContactManager {
 			pastMeetings.put(id, meeting);
 		}
 		//B) It is a futureMeeting that took place and I now want to recreate it as a pastMeeting and add some notes
+		
+		//This if checks that the meeting was once added as a futureMeeting
 		else if (futureMeetings.containsKey(id)) {
+		
+			//I check that the meeting has already taken place and therefore is now a PastMeeting
+			
+			//Check that the meetings date is in the past
+		Calendar rightNow = Calendar.getInstance();
+		Calendar date = futureMeetings.get(id).getDate();
+		
+		if (date.compareTo(rightNow) > 0) {
+			throw new IllegalStateException("Date given is a future date");
+		}
+			
 			PastMeeting meeting = (PastMeeting) futureMeetings.get(id); //Cast the meeting to make it a PastMeeting
 			meeting = new PastMeetingImpl(meeting.getId(), meeting.getContacts(), meeting.getDate(), text);
 			//Remove the meting from the futureMeetings map
@@ -278,14 +346,10 @@ public class ContactManagerImpl implements ContactManager {
 				out.print(meeting.getId());
 				out.print(",");
 				for (Contact contact : meeting.getContacts()) {
-					out.print(contact.getId());
-					out.print(",");
-					out.print(contact.getName());
-					out.print(",");
-					out.print(contact.getNotes());
-					out.print(",");
+					out.print("contact " + contact.getId());
+					out.print("|");
 				}
-				
+				out.print(",");
 				out.print(DateConverter.date2String(meeting.getDate()));
 				out.print(",");
 				out.println(meeting.getNotes());
@@ -296,14 +360,10 @@ public class ContactManagerImpl implements ContactManager {
 				out.print(meeting.getId());
 				out.print(",");
 				for (Contact contact : meeting.getContacts()) {
-					out.print(contact.getId());
-					out.print(",");
-					out.print(contact.getName());
-					out.print(",");
-					out.print(contact.getNotes());
-					out.print(",");
+					out.print("contact " + contact.getId());
+					out.print("|");
 				}
-				
+				out.print(",");
 				out.println(DateConverter.date2String(meeting.getDate()));
 			}	
 		} catch (FileNotFoundException ex) {
