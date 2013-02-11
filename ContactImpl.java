@@ -53,7 +53,7 @@ public class ContactImpl implements Contact {
 		}
 		return true;
 	}
-	//Created hashCode method with Eclpise's help
+	//Created hashCode method too
 	@Override
 	public int hashCode() {
 		final int prime = 31;
