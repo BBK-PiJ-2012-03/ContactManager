@@ -8,7 +8,7 @@ public class ContactImpl implements Contact {
 	public ContactImpl(int ID, String name) {
 		this.ID = ID;
 		this.name = name;
-		this.notes = "";
+		this.notes = null;
 	}
 
 	public int getId() {
@@ -24,8 +24,14 @@ public class ContactImpl implements Contact {
 	}
 	
 	public void addNotes(String note) {
-		notes = notes + "\n" + note;
+		if (notes == null) {
+			notes = note;
+		}
+		else {
+		notes = notes + ". " + note;
+		}
 	}	
+	
 	
 	@Override
     public boolean equals(Object obj) {
