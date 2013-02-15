@@ -11,17 +11,44 @@ public class ContactImpl implements Contact {
 		this.notes = null;
 	}
 
+	/**
+	* Returns the ID of the contact.
+	*
+	* @return the ID of the contact.
+	*/
+	
 	public int getId() {
 		return ID;
 	}
+	
+	/**
+	* Returns the name of the contact.
+	*
+	* @return the name of the contact.
+	*/
 
 	public String getName() {
 		return name;
 	}
+	
+	/**
+	* Returns our notes about the contact, if any.
+	*
+	* If we have not written anything about the contact, the empty
+	* string is returned.
+	*
+	* @return a string with notes about the contact, maybe empty.
+	*/
 
 	public String getNotes() {
 		return notes;
 	}
+	
+	/**	
+	* Add notes about the contact.
+	*
+	* @param note the notes to be added
+	*/
 	
 	public void addNotes(String note) {
 		if (notes == null) {
@@ -34,9 +61,9 @@ public class ContactImpl implements Contact {
 	
 	
 	@Override
-    public boolean equals(Object obj) {
-       if (obj == null) {
-        return false;
+  public boolean equals(Object obj) {
+     if (obj == null) {
+      return false;
 		}
 		if (getClass() != obj.getClass()) {
 			return false;
@@ -64,6 +91,4 @@ public class ContactImpl implements Contact {
 		return result;
 	}
 	
-}	
-		
-	
+}
