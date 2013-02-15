@@ -1,13 +1,28 @@
-import java.util.*;
-import java.io.*;
-
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ContactManagerImpl implements ContactManager {
+	//declaring and initializing the counters for contacts and meetings.
+	//Note that the both pastMeetings and futureMeetings have a common counter and numbering
 	private int meetingCount = 0;
 	private int contactCount = 0;
+	//Contacts, PastMeetings and FutureMeetings are stored in Maps with their id's
 	private Map<Integer, PastMeeting> pastMeetings = new HashMap<Integer, PastMeeting>();
 	private Map<Integer, FutureMeeting> futureMeetings = new HashMap<Integer, FutureMeeting>();
 	private Map<Integer, Contact> savedContacts = new HashMap<Integer, Contact>();
+	//Creation of the file to save/load data
 	private File file = new File("contacts.txt");
 	
 	public ContactManagerImpl() {
@@ -16,6 +31,11 @@ public class ContactManagerImpl implements ContactManager {
 		}
 	}
 
+	/**
+	 * Method that reads the file with the stored data of contacts, meetings
+	 * The method is called from the constractor if the file exists. 
+	 */
+	
 	private void readFromFile() {
 		BufferedReader in = null;
 		try {
@@ -26,9 +46,9 @@ public class ContactManagerImpl implements ContactManager {
 			while ((line = in.readLine()) != null) {
 				//I split each line into an array using comma (",") as a delimiter
 				array = line.split(",");
-				//Then, I recognise what each line refers to by the first element of the array which is the header.
+				//Then, I recognize what each line refers to by the first element of the array which is the header.
 				String header = array[0];
-				// I cant use switch/case because string is not a primitive type. So ill go with if/else.
+				// I can't use switch/case because string is not a primitive type. So ill go with if/else.
 
 				if (header.equals("Contact")) {
 					//I get the values from the array
@@ -49,7 +69,7 @@ public class ContactManagerImpl implements ContactManager {
 					Set<Contact> meetSet = new HashSet<Contact>();
 					//I create another String array to store the contacts
 					String[] contArray;
-					//I assign the contacts to this array by spliting the contact part of the initial array with the delimiter "/"
+					//I assign the contacts to this array by splitting the contact part of the initial array with the delimiter "/"
 					contArray = array[2].split("/");
 					int contArraySize = contArray.length;
 					for (int i=0 ; i<contArraySize ; i++) {
@@ -63,7 +83,7 @@ public class ContactManagerImpl implements ContactManager {
 						meetSet.add(contact);
 					
 					}
-					//Then I the other values from the fist array
+					//Then I get the other values from the fist array
 					int meetId = Integer.parseInt(array[1]);
 					String stringDate = array[3];
 					String meetNotes = array[4];
@@ -74,7 +94,7 @@ public class ContactManagerImpl implements ContactManager {
 					PastMeeting pastMeet = new PastMeetingImpl(meetId, meetSet, meetDate, meetNotes);
 					//And add it to my PastMeetings map
 					pastMeetings.put(meetId, pastMeet);
-					//Finally update the meeting counter
+					//Finally update the meeting counter if needed
 					if (meetingCount < meetId) {
 						meetingCount = meetId;
 					}	
@@ -84,7 +104,7 @@ public class ContactManagerImpl implements ContactManager {
 					Set<Contact> meetSet = new HashSet<Contact>();
 					//I create another String array to store the contacts
 					String[] contArray;
-					//I assign the contacts to this array by spliting the contact part of the initial array with the delimiter "/"
+					//I assign the contacts to this array by splitting the contact part of the initial array with the delimiter "/"
 					contArray = array[2].split("/");
 					int contArraySize = contArray.length;
 					for (int i=0 ; i<contArraySize ; i++) {
@@ -97,7 +117,7 @@ public class ContactManagerImpl implements ContactManager {
 						//Finally add the contact to my Set
 						meetSet.add(contact);
 					}
-					//Then I the other values from the fist array
+					//Then I get the other values from the fist array
 					int meetId = Integer.parseInt(array[1]);
 					String stringDate = array[3];
 					//Now I convert the stringDate to a Calendar Date with my DateConverter
@@ -107,14 +127,14 @@ public class ContactManagerImpl implements ContactManager {
 					FutureMeeting futureMeet = new FutureMeetingImpl(meetId, meetSet, meetDate);
 					//And add it to my FutureMeetings map
 					futureMeetings.put(meetId, futureMeet);
-					//Finally update the meeting counter
+					//Finally update the meeting counter if needed
 					if (meetingCount < meetId) {
 						meetingCount = meetId;
 					}	
 				}	
 			}	
 		} 
-		// This exception cannot happen, because i checked if file exists in the constructor, maybe ill remove it. TODO
+		// This exception cannot happen, because i checked if file exists in the constructor, I just left it here for clarity
 		catch (FileNotFoundException ex) {
 			System.out.println("File " + file + " does not exist.");
 		} catch (IOException ex) {
@@ -132,11 +152,16 @@ public class ContactManagerImpl implements ContactManager {
 		}
 	}	
 			
-		
-		
-		
-		
-		
+	/**
+	* Add a new meeting to be held in the future.
+	*
+	* @param contacts a list of contacts that will participate in the meeting
+	* @param date the date on which the meeting will take place
+	* @return the ID for the meeting
+	* @throws IllegalArgumentException if the meeting is set for a time in the past,
+	* of if any contact is unknown / non-existent
+	*/	
+	
 	public int addFutureMeeting(Set<Contact> contacts, Calendar date) {		
 		//Check if any contact is unknown / non-existent
 		contacts = new HashSet<Contact>(contacts);
@@ -160,27 +185,50 @@ public class ContactManagerImpl implements ContactManager {
 		//Finally return the meeting's id
 		return futureMeet.getId();
 		
-	}	
-
+	}
+	
+	/**
+	* Returns the PAST meeting with the requested ID, or null if there is none.
+	*
+	* @param id the ID for the meeting
+	* @return the meeting with the requested ID, or null if it there is none.
+	* @throws IllegalArgumentException if there is a meeting with that ID happening in the future
+	*/
+	
 	public PastMeeting getPastMeeting(int id) {
 		//Check if there is a meeting with that ID happening in the future
 		if (futureMeetings.containsKey(id)) {
 			throw new IllegalArgumentException("Error, there is a meeting with that ID happening in the future");
 		}
 		//According to HashMap's get() method Documentation, null is returned if the map contains no mapping for the key
-		//Hence, I dont have to check separately if there is a meeting with this id
+		//Hence, I don't have to check separately if there is a meeting with this id
 		return pastMeetings.get(id);
 	}
 
+	/**
+	* Returns the FUTURE meeting with the requested ID, or null if there is none.
+	*
+	* @param id the ID for the meeting
+	* @return the meeting with the requested ID, or null if it there is none.
+	* @throws IllegalArgumentException if there is a meeting with that ID happening in the past
+	*/
+	
 	public FutureMeeting getFutureMeeting(int id) {
 		//Check if there is a meeting with that ID happening in the past
 		if (pastMeetings.containsKey(id)) {
 			throw new IllegalArgumentException("Error, there is a meeting with that ID happening in the past");
 		}
 		//According to HashMap's get() method Documentation, null is returned if the map contains no mapping for the key
-		//Hence, I dont have to check separately if there is a meeting with this id
+		//Hence, I don't have to check separately if there is a meeting with this id
 		return futureMeetings.get(id);
 	}
+	
+	/**
+	* Returns the meeting with the requested ID, or null if it there is none.
+	*
+	* @param id the ID for the meeting
+	* @return the meeting with the requested ID, or null if it there is none.
+	*/
 	
 	public Meeting getMeeting(int id) {
 		//Check if the meeting is a PastMeeting
@@ -192,6 +240,18 @@ public class ContactManagerImpl implements ContactManager {
 			return futureMeetings.get(id);
 		}
 	}	
+	
+	/**
+	* Returns the list of future meetings scheduled with this contact.
+	*
+	* If there are none, the returned list will be empty. Otherwise,
+	* the list will be chronologically sorted and will not contain any
+	* duplicates.
+	*
+	* @param contact one of the user’s contacts
+	* @return the list of future meeting(s) scheduled with this contact (maybe empty).
+	* @throws IllegalArgumentException if the contact does not exist
+	*/
 	
 	public List<Meeting> getFutureMeetingList(Contact contact) {
 		//Check if contact is unknown / non-existent
@@ -214,12 +274,29 @@ public class ContactManagerImpl implements ContactManager {
 		return contactMeetings;
 	}
 	
+	/**
+	* Returns the list of meetings that are scheduled for, or that took
+	* place on, the specified date
+	*
+	* If there are none, the returned list will be empty. Otherwise,
+	* the list will be chronologically sorted and will not contain any
+	* duplicates.
+	*
+	* @param date the date
+	* @return the list of meetings
+	* THIS METHOD RETURNS BOTH PAST AND FUTURE MEETINGS BUT ITS NAME IS NOT CHANGED TO GETMEETINGLIST FOR SAKE OF CONSISTENCY
+	*/
+	
 	public List<Meeting> getFutureMeetingList(Calendar date) {
 		
 		//Create a new Meeting List copying my futureMeetings Map.
 		List<Meeting> dateMeetings = new LinkedList<Meeting>(futureMeetings.values());
 		
-		//Removing all meetings that are not with the desired contact
+		//ADDITION due to answers to questions
+		//I have to add to the new list the pastMeetings as well
+		dateMeetings.addAll(pastMeetings.values());
+		
+		//Removing all meetings that are not at the specified date
 		for (Meeting meeting : dateMeetings) {
 			if(!meeting.getDate().equals(date)) {
 				dateMeetings.remove(meeting);
@@ -231,6 +308,17 @@ public class ContactManagerImpl implements ContactManager {
 		
 		return dateMeetings;
 	}
+	
+	/**
+	* Returns the list of past meetings in which this contact has participated.
+	*
+	* If there are none, the returned list will be empty. Otherwise,
+	* the list will be chronologically sorted and will not contain any
+	* duplicates.
+	* @param contact one of the user’s contacts
+	* @return the list of pas meeting(s) with this contact (maybe empty).
+	* @throws IllegalArgumentException if the contact does not exist
+	*/
 	
 	public List<PastMeeting> getPastMeetingList(Contact contact) {
 		//Check if contact is unknown / non-existent
@@ -252,6 +340,17 @@ public class ContactManagerImpl implements ContactManager {
 		
 		return contactMeetings;
 	}
+	
+	/**
+	* Create a new record for a meeting that took place in the past.
+	*
+	* @param contacts a list of participants
+	* @param date the date on which the meeting took place
+	* @param text messages to be added about the meeting.
+	* @throws IllegalArgumentException if the list of contacts is
+	* empty, or any of the contacts does not exist
+	* @throws NullPointerException if any of the arguments is null
+	*/
 	
 	public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) {		
 		//Check if date is null
@@ -287,9 +386,18 @@ public class ContactManagerImpl implements ContactManager {
 	}	
 	
 	/**
-	*This method can be used either to convert a futureMeeting that took place to a pastMeeting with notes,
-	*or to add notes to an existant pastMeeting
+	* Add notes to a meeting.
+	*
+	* This method can be used either to convert a futureMeeting that took place to a pastMeeting with notes,
+	* or to add notes to an existing pastMeeting at a later date
+	*
+	* @param id the ID of the meeting
+	* @param text messages to be added about the meeting.
+	* @throws IllegalArgumentException if the meeting does not exist
+	* @throws IllegalStateException if the meeting is set for a date in the future
+	* @throws NullPointerException if the notes are null
 	*/
+	
 	public void addMeetingNotes(int id, String text) {
 		//Check if the notes entered are null
 		if (text == null) {
@@ -301,7 +409,7 @@ public class ContactManagerImpl implements ContactManager {
 		if (pastMeetings.containsKey(id)) {  
 			PastMeeting meeting = pastMeetings.get(id);
 			String finalNotes = (meeting.getNotes() + "\n" + text);
-			//Recreat the meeting with the new notes
+			//Recreate the meeting with the new notes
 			meeting = new PastMeetingImpl(meeting.getId(), meeting.getContacts(), meeting.getDate(), finalNotes);
 			//Remove the old meeting from my pastMeetings map
 			pastMeetings.remove(id);
@@ -334,11 +442,14 @@ public class ContactManagerImpl implements ContactManager {
 		else throw new IllegalArgumentException("A meeting with this id does NOT exist");
 	}	
 		
-		
-		
-		
-		
-		
+	/**
+	* Create a new contact with the specified name and notes.
+	*
+	* @param name the name of the contact.
+	* @param notes notes to be added about the contact.
+	* @throws NullPointerException if the name or the notes are null
+	*/
+	
 	public void addNewContact(String name, String notes) {
 		//Check if name is null
 		if (name == null) {
@@ -360,6 +471,14 @@ public class ContactManagerImpl implements ContactManager {
 		//Finally add the newContact to the savedContacts Map
 		savedContacts.put(contactCount,contact);
 	}	
+	
+	/**
+	* Returns a list containing the contacts that correspond to the IDs.
+	*
+	* @param ids an arbitrary number of contact IDs
+	* @return a list containing the contacts that correspond to the IDs.
+	* @throws IllegalArgumentException if any of the IDs does not correspond to a real contact
+	*/
 		
 	public Set<Contact> getContacts(int... ids) {
 		//Creat the set of contacts to be returned
@@ -377,6 +496,14 @@ public class ContactManagerImpl implements ContactManager {
 		//Finally return the set
 		return contacts;
 	}	
+	
+	/**
+	* Returns a list with the contacts whose name contains that string.
+	*
+	* @param name the string to search for
+	* @return a list with the contacts whose name contains that string.
+	* @throws NullPointerException if the parameter is null
+	*/
 		
 	public Set<Contact> getContacts(String name) {
 	
@@ -396,6 +523,14 @@ public class ContactManagerImpl implements ContactManager {
 		}
 			return contacts;
 	}		
+	
+	/**
+	* Save all data to disk.
+	* For convenience the file is written from scratch every time this method is called, based on the values taken from the data structures of this class.
+	* 
+	* This method must be executed when the program is
+	* closed and when/if the user requests it.
+	*/
 	
 	public void flush() {
 		//Creating the file
@@ -447,25 +582,5 @@ public class ContactManagerImpl implements ContactManager {
 				out.close();
 			}
 		}
-	
-	
-	
-	
 	}
-		
-	
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
