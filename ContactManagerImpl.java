@@ -292,21 +292,28 @@ public class ContactManagerImpl implements ContactManager {
 		//Create a new Meeting List copying my futureMeetings Map.
 		List<Meeting> dateMeetings = new LinkedList<Meeting>(futureMeetings.values());
 		
+		//I also create a list to put the meetings of the specified date
+		List<Meeting> meetingsOnDate = new LinkedList<Meeting>();
+		
 		//ADDITION due to answers to questions
 		//I have to add to the new list the pastMeetings as well
 		dateMeetings.addAll(pastMeetings.values());
 		
-		//Removing all meetings that are not at the specified date
+		//I add all the meetings with the specified date to the meetingsOnDate list
+		//Note that I IGNORE the Time of the meeting so I have to compare only the year, month, day
 		for (Meeting meeting : dateMeetings) {
-			if(!meeting.getDate().equals(date)) {
-				dateMeetings.remove(meeting);
+		
+			Calendar date2 = meeting.getDate();
+
+			if(date.get(Calendar.YEAR) ==(date2.get(Calendar.YEAR)) && date.get(Calendar.MONTH)==(date2.get(Calendar.MONTH)) && date.get(Calendar.DAY_OF_MONTH)==(date2.get(Calendar.DAY_OF_MONTH))) {
+				meetingsOnDate.add(meeting);
 			}
 		}
 		
 		//Now sort the dateMeetings list chronologically
-		Collections.sort(dateMeetings, new SortByDate());
+		Collections.sort(meetingsOnDate, new SortByDate());
 		
-		return dateMeetings;
+		return meetingsOnDate;
 	}
 	
 	/**
@@ -408,7 +415,7 @@ public class ContactManagerImpl implements ContactManager {
 		//A) It is a pastMeeting, so i want to add the new notes to it
 		if (pastMeetings.containsKey(id)) {  
 			PastMeeting meeting = pastMeetings.get(id);
-			String finalNotes = (meeting.getNotes() + "\n" + text);
+			String finalNotes = (meeting.getNotes() + ". " + text);
 			//Recreate the meeting with the new notes
 			meeting = new PastMeetingImpl(meeting.getId(), meeting.getContacts(), meeting.getDate(), finalNotes);
 			//Remove the old meeting from my pastMeetings map
@@ -430,8 +437,8 @@ public class ContactManagerImpl implements ContactManager {
 			}
 			
 			//Now i recreate the meeting as a PastMeeting
-			PastMeeting meeting = (PastMeeting) futureMeetings.get(id); //Cast the meeting to make it a PastMeeting
-			meeting = new PastMeetingImpl(meeting.getId(), meeting.getContacts(), meeting.getDate(), text);
+			PastMeeting meeting = new PastMeetingImpl(futureMeetings.get(id).getId(), futureMeetings.get(id).getContacts(), futureMeetings.get(id).getDate(), text);
+		
 			//Remove the meting from the futureMeetings map
 			futureMeetings.remove(id);
 			//Finally add the meeting to the pastMeetings map
