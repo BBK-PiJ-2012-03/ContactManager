@@ -1,4 +1,4 @@
-import java.util.*;
+import java.util.Comparator;
 
 //A class that implements the interface Comparator, overriding the compare method to compare 2 Meetings by their dates
 public class SortByDate implements Comparator<Meeting>{
