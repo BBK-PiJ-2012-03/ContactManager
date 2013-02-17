@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class ContactManagerImpl implements ContactManager {
 	//declaring and initializing the counters for contacts and meetings.
-	//Note that the both pastMeetings and futureMeetings have a common counter and numbering
+	//Note that the both pastMeetings and futureMeetings have a common counter and numbering, so that we can use method getMeeting(id)
 	private int meetingCount = 0;
 	private int contactCount = 0;
 	//Contacts, PastMeetings and FutureMeetings are stored in Maps with their id's
@@ -134,7 +134,7 @@ public class ContactManagerImpl implements ContactManager {
 				}	
 			}	
 		} 
-		// This exception cannot happen, because i checked if file exists in the constructor, I just left it here for clarity
+		// This exception cannot happen, because I checked if file exists in the constructor, I just left it here for clarity
 		catch (FileNotFoundException ex) {
 			System.out.println("File " + file + " does not exist.");
 		} catch (IOException ex) {
@@ -310,7 +310,7 @@ public class ContactManagerImpl implements ContactManager {
 			}
 		}
 		
-		//Now sort the dateMeetings list chronologically
+		//Now sort the dateMeetings list chronologically (based on the time )
 		Collections.sort(meetingsOnDate, new SortByDate());
 		
 		return meetingsOnDate;
@@ -541,6 +541,7 @@ public class ContactManagerImpl implements ContactManager {
 	
 	public void flush() {
 		//Creating the file
+		//Since we dont seek the best performance, this method will write the file from scratch even if no changes were made.
 		File file = new File("contacts.txt");
 			PrintWriter out = null;
 		try {

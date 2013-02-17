@@ -59,7 +59,7 @@ public class ContactImpl implements Contact {
 		}
 	}	
 	
-	
+	//Ovverride equals method
 	@Override
   public boolean equals(Object obj) {
      if (obj == null) {
@@ -80,7 +80,7 @@ public class ContactImpl implements Contact {
 		}
 		return true;
 	}
-	//Created hashCode method too
+	//Override hashCode method too
 	@Override
 	public int hashCode() {
 		final int prime = 31;
